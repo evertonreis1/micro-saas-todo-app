@@ -6,25 +6,27 @@ import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Label } from "@/components/ui/label"
 import { AlertCircle, Loader2 } from 'lucide-react'
+import { useForm } from 'react-hook-form'
 
 export default function AuthForm() {
+
+  const form = useForm()
   const [email, setEmail] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState(false)
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setIsLoading(true)
-    setError(null)
-    setSuccess(false)
-
+  // Tornando a função assíncrona
+  const handleSubmitAsync = async (data: any) => {
     try {
-      // Here you would typically call your authentication API
-      // For demonstration, we'll simulate an API call
+      setIsLoading(true)
+      setError(null)
+      setSuccess(false)
+
+      // Simulando uma chamada de API
       await new Promise(resolve => setTimeout(resolve, 2000))
-      
-      // Simulating a successful response
+
+      // Simulando uma resposta bem-sucedida
       setSuccess(true)
     } catch (err) {
       setError('An error occurred while sending the magic link. Please try again.')
@@ -41,7 +43,7 @@ export default function AuthForm() {
           <CardDescription>Enter your email to receive a magic link</CardDescription>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handleSubmit}>
+          <form onSubmit={form.handleSubmit(handleSubmitAsync)}>
             <div className="space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="email">Email</Label>
@@ -49,9 +51,7 @@ export default function AuthForm() {
                   id="email"
                   type="email"
                   placeholder="you@example.com"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  required
+                  {...form.register('email')}
                 />
               </div>
               {error && (
@@ -72,8 +72,7 @@ export default function AuthForm() {
           <Button 
             className="w-full" 
             type="submit" 
-            disabled={isLoading} 
-            onClick={handleSubmit}
+            disabled={isLoading}
           >
             {isLoading ? (
               <>
